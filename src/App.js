@@ -14,7 +14,8 @@ class App extends Component {
 
     this.state = {
       vehiclesToDisplay: [],
-      buyersToDisplay: []
+      buyersToDisplay: [],
+      baseURL: 'https://joes-autos.herokuapp.com'
     }
 
     this.getVehicles = this.getVehicles.bind(this);
@@ -32,37 +33,57 @@ class App extends Component {
 
   getVehicles() {
     // axios (GET)
+    axios.get(`${this.state.baseURL}/api/vehicles`)
+    .then(response => this.setState({vehiclesToDisplay: response.data}))
+    ToastStore.success('Great Job!',3000)
+    .catch(err => {console.log(err)})
     // setState with response -> vehiclesToDisplay
   }
 
   getPotentialBuyers() {
     // axios (GET)
+    axios.get(`${this.state.baseURL}/api/buyers`)
     // setState with response -> buyersToDisplay
+    .then(res => this.setState({buyersToDisplay: res.data}))
+      .catch(err => console.log(err))
   }
 
   sellCar(id) {
     // axios (DELETE)
+    axios.delete(`${this.state.baseURL}/api/vehicles/${id}`)
     // setState with response -> vehiclesToDisplay
+    .then(res => this.setState({vehiclesToDisplay: res.data.vehicles}))
+      .catch(err => console.log(err))
   }
 
   filterByMake() {
     let make = this.refs.selectedMake.value
     // axios (GET)
+    axios.get(`${this.state.baseURL}/api/vehicles/?make={make}`)
     // setState with response -> vehiclesToDisplay
+    .then(res => this.setState({vehiclesToDisplay: res.data}))
+    .catch(err => console.log(err))
   }
 
   filterByColor() {
     let color = this.refs.selectedColor.value;
     // axios (GET)
+    axios.get(`${this.state.baseURL}/api/vehicles?color={color}`)
     // setState with response -> vehiclesToDisplay
+      .then(res => this.setState({ vehiclesToDisplay: res.data }))
+      .catch(err => console.log(err))
   }
 
   updatePrice(priceChange, id) {
     // axios (PUT)
+    axios.put(`${this.state.baseURL}/api/vehicles/${id}/${priceChange}`)
     // setState with response -> vehiclesToDisplay
+    .then(res => this.setState({vehiclesToDisplay: res.data}))
+    .catch(err => console.log(err))
   }
 
   addCar(){
+
   let newCar = {
     make: this.refs.make.value,
     model: this.refs.model.value,
@@ -71,7 +92,10 @@ class App extends Component {
     price: this.refs.price.value
   }  
   // axios (POST)
+  axios.post(`${this.state.baseURL}/api/vehicles`, newCar)
   // setState with response -> vehiclesToDisplay
+  .then(res => this.setState({vehiclesToDisplay: res.data.vehicles}))
+  .catch(err => console.log(err))
 }
 
 addBuyer() {
@@ -81,23 +105,36 @@ addBuyer() {
     address: this.refs.address.value
   }
   //axios (POST)
+  axios.post(`${this.state.baseURL}/api/buyers`, newBuyer)
   // setState with response -> buyersToDisplay
+    .then(res => this.setState({buyersToDisplay: res.data.buyers}))
+    .catch(err => console.log(err))
 }
 
 deleteBuyer(id){
+  axios.delete(`${this.state.baseURL}/api/buyers/${id}`)
   //setState with response -> buyersToDisplay
+    .then(res => this.setState({ buyersToDisplay: res.data.buyers }))
+    .catch(err => console.log(err))
 }
 
 nameSearch() {
   // axios (GET)
+  
   // setState with response -> buyersToDisplay
   let searchLetters = this.refs.searchLetters.value;
+  axios.get(`${this.state.baseURL}/api/buyers/?name=${searchLetters}`)
+  .then(res => this.setState({buyersToDisplay: res.data}))
+  .catch(err => console.log(err))
 }
 
 byYear() {
   let year = this.refs.searchYear.value;
   // axios (GET)
+  axios.get(`${this.state.baseURL}/api/vehicles/?year=${year}`)
   // setState with response -> vehiclesToDisplay
+    .then(res => this.setState({ vehiclesToDisplay: res.data }))
+    .catch(err => console.log(err))
 }
 
 // ==============================================
